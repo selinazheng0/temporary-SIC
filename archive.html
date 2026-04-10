@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gallery</title>
+    <link rel="stylesheet" href="style.css"/>
+    <link rel="stylesheet" href="https://use.typekit.net/agd2aaq.css">
+    <script>
+      (function(d) {
+      var config = {
+      kitId: 'agd2aaq',
+      scriptTimeout: 3000,
+      async: true
+      },
+      h=d.documentElement,t=setTimeout(function(){h.className=h.className.replace(/\bwf-loading\b/g,"")+" wf-inactive";},config.scriptTimeout),tk=d.createElement("script"),f=false,s=d.getElementsByTagName("script")[0],a;h.className+=" wf-loading";tk.src='https://use.typekit.net/'+config.kitId+'.js';tk.async=true;tk.onload=tk.onreadystatechange=function(){a=this.readyState;if(f||a&&a!="complete"&&a!="loaded")return;f=true;clearTimeout(t);try{Typekit.load(config)}catch(e){}};s.parentNode.insertBefore(tk,s)
+    })(document);
+</script>
+</head>
+<body>
+    <div class="topnav" id="navigation">
+        <a href="info.html">Shanzhai is ...</a>
+        <a href="archive.html" style="text-decoration: underline;">Gallery</a>
+        <a href="references.html">References</a>
+      </div>
+   <div class="info-upload-container">
+    <div class="info-text">
+    <h1>This gallery is a living archive of the ephemera related to the shanzhai practices. 
+        Unlike most online forums that feature shanzhai, this page is a place of appreciation, inspiration, and reverence as opposed to ridicule.
+    </h1>
+    </div>
+    <div class="upload-container">
+    <details class="collapse-menu">
+        <summary class="collapse-toggle">Contribute to the Gallery</summary>
+        <div class="collapse-content">
+            <div class="upload-buttons">
+                <input type="file" id="myFile" multiple onchange="showFileInfo()">
+                <label for="myFile" class="custom-file-upload">+ Attach image file</label>
+                <button onclick="uploadFiles()" class="upload">Upload</button>
+            <p id="demo"></p>
+            </div>
+            <div id="upload-img-descrip">
+                <textarea 
+                placeholder="Add a short visual description of your image. Max 140 characters."
+                class="img-descrip"
+                maxlength="140"></textarea>    
+            </div> 
+        </div>    
+    <h6>User uploaded content must be the uploader's own creation and/or a photograph taken by the uploader.
+    Do not upload images without the consent of the owner. Do not upload media containing any personally identifiable information.
+    Content must be relevant to shanzhai practices; if its relation is not clear through the image and description or otherwise deemed inappropriate it will be removed.
+    </h6>
+        </div>
+    </details>
+    </div>
+<script>
+function showFileInfo() {
+  const input = document.getElementById("myFile");
+  let txt = "";
+
+  if (input.files.length === 0) {
+    txt = "Select one or more files.";
+  } else {
+    for (let i = 0; i < input.files.length; i++) {
+    const file = input.files[i];
+    txt += "File " + ": " + file.name + "<br>";
+    }
+  }
+
+  document.getElementById("demo").innerHTML = txt;
+}
+
+// UPLOAD FILES TO SERVER
+async function uploadFiles() {
+  const input = document.getElementById("myFile");
+
+  if (!input.files.length) {
+    alert("Select files first");
+    return;
+  }
+
+  for (let i = 0; i < input.files.length; i++) {
+    const file = input.files[i];
+
+    const arrayBuffer = await file.arrayBuffer();
+    console.log(file)
+    console.log(arrayBuffer)
+
+    let request = new Request('/uploadFile', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/octet-stream',
+        'x-file-name': file.name
+      },
+      body: arrayBuffer
+    })
+
+    fetch(request).then((response) => {
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        alert("Files uploaded to server");
+    }).catch((error) =>{
+        alert("Error: " + error);
+    });
+  }
+}
+
+function getImages(description){
+    let images = []
+    fetch('/listFiles', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'text/plain',
+      body: description
+    }}).then((res) => {
+        imageList = res.body;
+        imageList.forEach((image) => {
+            console.log(image.name)
+            console.log(image.description)
+        })
+
+    }).catch((error) =>{alert("Error: " + error);});
+}
+//getImages()
+</script>
+</div>
+   <div class="gallery-grid">
+        <div>
+            <img class="gallery-img" src="userimages/fearofgodlyric.jpg" alt="alt text">
+        </div>
+        <div>
+            <img class="gallery-img" src="userimages/1775677981803-bryan t shirt.jpg" alt="This was made during the Shanzhai Seminar. It utilizes the No. symbol from Chanel fragrances in a playful manner to say, no thank you.">
+        </div>
+        <div>
+            <img class="gallery-img" src="userimages/">
+        </div>
+        <div>
+            <img class="gallery-img" src="userimages/">
+        </div>
+        <div>
+            <img class="gallery-img" src="userimages/">
+        </div>
+        <div>
+            <img class="gallery-img" src="userimages/">
+        </div>
+        <div>
+            <img class="gallery-img" src="userimages/">
+        </div>
+        <div>
+            <img class="gallery-img" src="userimages/">
+        </div>
+
+        <div id="imgModal" class="modal">
+            <span class="close">&times;</span>
+            <img class="modal-content" id="modalImg">
+        <div id="caption"></div>
+        </div>
+    </div>
+   </div>
+      <div class="homebutton">
+        <a href="index.html">
+          <img src="images/shanzhai-logo-revised3.svg" alt="Home">
+        </a>
+      </div>
+          <script>
+            
+        const modal = document.getElementById("imgModal");
+        const modalImg = document.getElementById("modalImg");
+        const captionText = document.getElementById("caption");
+        const images = document.querySelectorAll(".gallery-img");
+        const closeBtn = document.querySelector(".close");
+        images.forEach(img => {
+            img.addEventListener("click", function() {
+                modal.style.display = "flex";
+                modalImg.src = this.src;
+                captionText.innerHTML = this.alt;
+            });
+        });
+        closeBtn.onclick = function() {
+            modal.style.display = "none";
+        };
+        // Optional: close when clicking outside image
+        modal.onclick = function(e) {
+            if (e.target === modal) {
+                modal.style.display = "none";
+            }
+        };
+    </script>
+</body>
+</html>

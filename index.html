@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shanzhai is culture</title>
+    <link rel="stylesheet" href="style.css"/>
+    <link rel="stylesheet" href="https://use.typekit.net/agd2aaq.css">
+<script>
+  (function(d) {
+    var config = {
+      kitId: 'agd2aaq',
+      scriptTimeout: 3000,
+      async: true
+    },
+    h=d.documentElement,t=setTimeout(function(){h.className=h.className.replace(/\bwf-loading\b/g,"")+" wf-inactive";},config.scriptTimeout),tk=d.createElement("script"),f=false,s=d.getElementsByTagName("script")[0],a;h.className+=" wf-loading";tk.src='https://use.typekit.net/'+config.kitId+'.js';tk.async=true;tk.onload=tk.onreadystatechange=function(){a=this.readyState;if(f||a&&a!="complete"&&a!="loaded")return;f=true;clearTimeout(t);try{Typekit.load(config)}catch(e){}};s.parentNode.insertBefore(tk,s)
+  })(document);
+</script>
+</head>
+<body>
+    <div class="topnav">
+        <a href="info.html">Shanzhai is ...</a>
+        <a href="archive.html">Gallery</a>
+        <a href="references.html">References</a>
+      </div>
+      <div class="logo">
+        <img src="images/shanzhai-logo-revised3.svg">
+      </div>
+
+      <div class="spawn-container"></div>
+      <script>
+const container = document.querySelector('.spawn-container');
+
+const images = [
+  'images/red/phones.png',
+  'images/red/canal.png',
+  'images/red/blockprint.png',
+  'images/red/terracotts.png',
+  'images/red/putian.png',
+  'images/red/endlessgarment.png',
+  'images/red/SA_market_6.png',
+];
+
+function spawnImage(src, delay = 0) {
+  const img = document.createElement('img');
+  img.src = src;
+  img.classList.add('spawned-img');
+
+  let active = true;
+
+  container.appendChild(img);
+
+  function cycle() {
+    if (!active) return;
+
+    // random position
+    img.style.top = Math.random() * 80 + '%';
+    img.style.left = Math.random() * 80 + '%';
+
+    // trigger animation (fade in)
+    setTimeout(() => {
+      if (!active) return;
+      img.classList.remove('hide');
+      img.classList.add('show');
+    }, 10);
+
+    // stay visible, then fade out
+    setTimeout(() => {
+      if (!active) return;
+
+      img.classList.remove('show');
+      img.classList.add('hide');
+
+      // after fade, repeat cycle
+      setTimeout(() => {
+        if (!active) return;
+        cycle();
+      }, 1000); // matches CSS transition
+
+    }, 3000); // visible duration (you had 5000)
+  }
+
+  // start cycle after delay
+  setTimeout(cycle, delay);
+
+  // stop on click
+  img.addEventListener('click', () => {
+    active = false;
+    img.remove();
+  });
+}
+
+// spawn all on load (same structure as yours)
+window.addEventListener('load', () => {
+  images.forEach((src, i) => {
+    setTimeout(() => spawnImage(src, i * 400));
+  });
+});
+
+/* // spawn all on load
+window.addEventListener('load', () => {
+  images.forEach((src, i) => {
+    setTimeout(() => spawnImage(src), i * 400);
+  });
+});*/
+</script>
+</body>
+</html>
